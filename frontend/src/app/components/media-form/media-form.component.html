@@ -1,0 +1,97 @@
+<a routerLink="/medias" class="back-link">Retour au catalogue</a>
+
+<h1>Ajouter un média</h1>
+
+<form (ngSubmit)="submit()" class="media-form">
+  <label for="type">Type</label>
+  <select id="type" name="type" [(ngModel)]="media.type" (ngModelChange)="onTypeChange()">
+    <option *ngFor="let t of types" [value]="t">{{ t }}</option>
+  </select>
+
+  <label for="titre">Titre</label>
+  <input id="titre" name="titre" type="text" [(ngModel)]="media.titre" required />
+
+  <label for="annee">Année</label>
+  <input id="annee" name="annee" type="number" [(ngModel)]="media.annee" />
+
+  <label for="imageUrl">URL de l'image (optionnel)</label>
+  <input id="imageUrl" name="imageUrl" type="text" [(ngModel)]="media.imageUrl" placeholder="https://…" />
+
+  <label for="description">Description</label>
+  <textarea id="description" name="description" rows="3" [(ngModel)]="media.description"></textarea>
+
+  <fieldset *ngIf="media.type === 'FILM'">
+    <legend>Détails du film</legend>
+
+    <label for="realisateur">Réalisateur</label>
+    <input id="realisateur" name="realisateur" type="text" [(ngModel)]="media.realisateur" />
+
+    <label for="dureeMinutes">Durée (minutes)</label>
+    <input id="dureeMinutes" name="dureeMinutes" type="number" [(ngModel)]="media.dureeMinutes" />
+  </fieldset>
+
+  <fieldset *ngIf="media.type === 'SERIE'">
+    <legend>Détails de la série</legend>
+
+    <label for="nombreSaisons">Nombre de saisons</label>
+    <input id="nombreSaisons" name="nombreSaisons" type="number" [(ngModel)]="media.nombreSaisons" />
+
+    <label for="nombreEpisodes">Nombre d'épisodes</label>
+    <input id="nombreEpisodes" name="nombreEpisodes" type="number" [(ngModel)]="media.nombreEpisodes" />
+
+    <label for="plateforme">Plateforme</label>
+    <input id="plateforme" name="plateforme" type="text" [(ngModel)]="media.plateforme" />
+
+    <label class="checkbox">
+      <input type="checkbox" name="enCoursSerie" [(ngModel)]="media.enCours" />
+      En cours de diffusion
+    </label>
+  </fieldset>
+
+  <fieldset *ngIf="media.type === 'MANGA'">
+    <legend>Détails du manga</legend>
+
+    <label for="auteurManga">Auteur</label>
+    <input id="auteurManga" name="auteurManga" type="text" [(ngModel)]="media.auteur" />
+
+    <label for="nombreTomes">Nombre de tomes</label>
+    <input id="nombreTomes" name="nombreTomes" type="number" [(ngModel)]="media.nombreTomes" />
+
+    <label class="checkbox">
+      <input type="checkbox" name="enCoursManga" [(ngModel)]="media.enCours" />
+      En cours de publication
+    </label>
+  </fieldset>
+
+  <fieldset *ngIf="media.type === 'LIVRE'">
+    <legend>Détails du livre</legend>
+
+    <label for="auteurLivre">Auteur</label>
+    <input id="auteurLivre" name="auteurLivre" type="text" [(ngModel)]="media.auteur" />
+
+    <label for="nombrePages">Nombre de pages</label>
+    <input id="nombrePages" name="nombrePages" type="number" [(ngModel)]="media.nombrePages" />
+
+    <label for="editeur">Éditeur</label>
+    <input id="editeur" name="editeur" type="text" [(ngModel)]="media.editeur" />
+  </fieldset>
+
+  <fieldset *ngIf="media.type === 'ALBUM'">
+    <legend>Détails de l'album</legend>
+
+    <label for="artiste">Artiste</label>
+    <input id="artiste" name="artiste" type="text" [(ngModel)]="media.artiste" />
+
+    <label for="nombrePistes">Nombre de pistes</label>
+    <input id="nombrePistes" name="nombrePistes" type="number" [(ngModel)]="media.nombrePistes" />
+
+    <label for="genreMusical">Genre musical</label>
+    <input id="genreMusical" name="genreMusical" type="text" [(ngModel)]="media.genreMusical" />
+  </fieldset>
+
+  <p *ngIf="error()" class="error">{{ error() }}</p>
+
+  <button type="submit" [disabled]="submitting() || !media.titre">
+    {{ submitting() ? 'Ajout en cours…' : 'Ajouter au catalogue' }}
+  </button>
+</form>

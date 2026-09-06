@@ -1,0 +1,102 @@
+.list-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+
+.filter {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+.status,
+.empty {
+  color: var(--color-text-muted);
+}
+
+.empty a {
+  color: var(--color-accent);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-left: 3px solid transparent;
+  border-radius: 6px;
+  overflow: hidden;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.card:hover {
+  background: var(--color-surface-hover);
+  transform: translateY(-2px);
+}
+
+.card.badge-FILM { border-left-color: var(--color-film); }
+.card.badge-SERIE { border-left-color: var(--color-serie); }
+.card.badge-MANGA { border-left-color: var(--color-manga); }
+.card.badge-LIVRE { border-left-color: var(--color-livre); }
+.card.badge-ALBUM { border-left-color: var(--color-album); }
+
+.cover {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+}
+
+.cover-placeholder {
+  width: 100%;
+  height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 3rem;
+  color: var(--color-text-muted);
+  background: var(--color-bg);
+}
+
+.card-body {
+  padding: 1rem;
+}
+
+.badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 3px;
+  margin-bottom: 0.5rem;
+  color: var(--color-bg);
+  font-weight: 600;
+}
+
+.badge-FILM { background: var(--color-film); }
+.badge-SERIE { background: var(--color-serie); }
+.badge-MANGA { background: var(--color-manga); }
+.badge-LIVRE { background: var(--color-livre); }
+.badge-ALBUM { background: var(--color-album); }
+
+.card h3 {
+  font-size: 1.05rem;
+  margin: 0 0 0.25rem;
+}
+
+.year {
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  margin: 0;
+}

@@ -1,0 +1,11 @@
+<header class="app-header">
+  <a routerLink="/medias" class="brand">Rate My Media</a>
+  <nav>
+    <a routerLink="/medias" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Catalogue</a>
+    <a routerLink="/medias/nouveau" routerLinkActive="active">Ajouter un média</a>
+  </nav>
+</header>
+
+<main class="app-main">
+  <router-outlet></router-outlet>
+</main>

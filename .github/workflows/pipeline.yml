@@ -1,0 +1,116 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  catalog-service-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configurer Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+          cache-dependency-path: catalog-service/pom.xml
+
+      - name: Lancer les tests (H2 en mémoire, pas de vraie base nécessaire)
+        working-directory: catalog-service
+        run: mvn test
+
+  review-service-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configurer Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+          cache-dependency-path: review-service/pom.xml
+
+      - name: Lancer les tests (Mockito, pas de vraie base ni Feign réel)
+        working-directory: review-service
+        run: mvn test
+
+  frontend-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configurer Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Installer les dépendances
+        working-directory: frontend
+        run: npm ci
+
+      - name: Build de production
+        working-directory: frontend
+        run: npm run build
+
+  e2e-web-tests:
+    runs-on: ubuntu-latest
+    # Pas de job "e2e-android" : un émulateur Android en CI nécessite un
+    # runner dédié (ex: reactivecircus/android-emulator-runner) et est
+    # nettement plus lent/instable qu'en local. On se limite ici à la
+    # configuration "web" (Chrome headless), suffisante pour valider le
+    # comportement applicatif à chaque push.
+    needs: [catalog-service-tests, review-service-tests, frontend-build]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configurer Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+          cache-dependency-path: e2e-tests/pom.xml
+
+      - name: Démarrer toute la stack (Postgres, Mongo, catalog-service, review-service, frontend)
+        run: docker compose up -d --build
+
+      - name: Attendre que catalog-service soit prêt
+        run: |
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:8081/actuator/health && exit 0
+            sleep 5
+          done
+          echo "catalog-service n'a pas répondu à temps" && exit 1
+
+      - name: Attendre que review-service soit prêt
+        run: |
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:8082/actuator/health && exit 0
+            sleep 5
+          done
+          echo "review-service n'a pas répondu à temps" && exit 1
+
+      - name: Lancer les tests Cucumber/Selenium (Chrome headless)
+        working-directory: e2e-tests
+        run: mvn test -Pweb -Dheadless=true
+
+      - name: Publier le rapport Cucumber (même en cas d'échec)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cucumber-report
+          path: e2e-tests/target/cucumber-report.html
+
+      - name: Arrêter la stack
+        if: always()
+        run: docker compose down

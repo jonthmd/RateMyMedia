@@ -1,0 +1,89 @@
+<a routerLink="/medias" class="back-link">Retour au catalogue</a>
+
+<p *ngIf="loading()" class="status">Chargement…</p>
+<p *ngIf="error()" class="error">{{ error() }}</p>
+
+<article *ngIf="media() as m" class="detail">
+  <img *ngIf="m.imageUrl" [src]="m.imageUrl" [alt]="m.titre" class="cover" />
+  <div class="cover-placeholder" *ngIf="!m.imageUrl">{{ m.titre.charAt(0) }}</div>
+
+  <div class="info">
+    <span class="badge" [class]="'badge-' + m.type">{{ m.type }}</span>
+    <h1>{{ m.titre }} <span class="year" *ngIf="m.annee">({{ m.annee }})</span></h1>
+    <p *ngIf="m.description" class="description">{{ m.description }}</p>
+
+    <dl class="specifics">
+      <ng-container *ngIf="m.realisateur">
+        <dt>Réalisateur</dt><dd>{{ m.realisateur }}</dd>
+      </ng-container>
+      <ng-container *ngIf="m.dureeMinutes">
+        <dt>Durée</dt><dd>{{ m.dureeMinutes }} min</dd>
+      </ng-container>
+      <ng-container *ngIf="m.nombreSaisons">
+        <dt>Saisons</dt><dd>{{ m.nombreSaisons }}</dd>
+      </ng-container>
+      <ng-container *ngIf="m.nombreEpisodes">
+        <dt>Épisodes</dt><dd>{{ m.nombreEpisodes }}</dd>
+      </ng-container>
+      <ng-container *ngIf="m.plateforme">
+        <dt>Plateforme</dt><dd>{{ m.plateforme }}</dd>
+      </ng-container>
+      <ng-container *ngIf="m.auteur">
+        <dt>Auteur</dt><dd>{{ m.auteur }}</dd>
+      </ng-container>
+      <ng-container *ngIf="m.nombreTomes">
+        <dt>Tomes</dt><dd>{{ m.nombreTomes }}</dd>
+      </ng-container>
+      <ng-container *ngIf="m.nombrePages">
+        <dt>Pages</dt><dd>{{ m.nombrePages }}</dd>
+      </ng-container>
+      <ng-container *ngIf="m.editeur">
+        <dt>Éditeur</dt><dd>{{ m.editeur }}</dd>
+      </ng-container>
+      <ng-container *ngIf="m.artiste">
+        <dt>Artiste</dt><dd>{{ m.artiste }}</dd>
+      </ng-container>
+      <ng-container *ngIf="m.nombrePistes">
+        <dt>Pistes</dt><dd>{{ m.nombrePistes }}</dd>
+      </ng-container>
+      <ng-container *ngIf="m.genreMusical">
+        <dt>Genre</dt><dd>{{ m.genreMusical }}</dd>
+      </ng-container>
+      <ng-container *ngIf="m.enCours !== undefined && m.enCours !== null">
+        <dt>En cours</dt><dd>{{ m.enCours ? 'Oui' : 'Non' }}</dd>
+      </ng-container>
+    </dl>
+
+    <p class="average" *ngIf="averageNote !== null">
+      Note moyenne : <strong>{{ averageNote }} / 5</strong> ({{ reviews().length }} avis)
+    </p>
+  </div>
+</article>
+
+<section class="reviews" *ngIf="media()">
+  <h2>Avis</h2>
+
+  <ul class="review-list" *ngIf="reviews().length > 0">
+    <li *ngFor="let r of reviews()">
+      <span class="note">{{ r.note }}/5</span>
+      <span *ngIf="r.commentaire" class="comment">{{ r.commentaire }}</span>
+    </li>
+  </ul>
+  <p *ngIf="reviews().length === 0" class="empty">Aucun avis pour l'instant. Sois le premier à donner ton avis.</p>
+
+  <form (ngSubmit)="submitReview()" class="review-form">
+    <label for="note">Note</label>
+    <select id="note" name="note" [(ngModel)]="newNote">
+      <option *ngFor="let n of [0,1,2,3,4,5]" [value]="n">{{ n }} / 5</option>
+    </select>
+
+    <label for="commentaire">Commentaire (optionnel)</label>
+    <textarea id="commentaire" name="commentaire" rows="3" [(ngModel)]="newCommentaire"></textarea>
+
+    <p *ngIf="submitError()" class="error">{{ submitError() }}</p>
+
+    <button type="submit" [disabled]="submitting()">
+      {{ submitting() ? 'Envoi en cours…' : 'Ajouter mon avis' }}
+    </button>
+  </form>
+</section>

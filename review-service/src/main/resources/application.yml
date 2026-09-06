@@ -1,0 +1,24 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: review-service
+  data:
+    mongodb:
+      uri: mongodb://${DB_HOST:localhost}:${DB_PORT:27017}/${DB_NAME:review_db}
+
+# URL de catalog-service, surchargeable selon l'environnement :
+# - en local : http://localhost:8081
+# - en Docker Compose : http://catalog-service:8081 (nom du service)
+catalog-service:
+  url: ${CATALOG_SERVICE_URL:http://localhost:8081}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
