@@ -11,10 +11,10 @@ jobs:
   catalog-service-tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Configurer Java 21
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: '21'
@@ -28,10 +28,10 @@ jobs:
   review-service-tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Configurer Java 21
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: '21'
@@ -45,12 +45,12 @@ jobs:
   frontend-build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - name: Configurer Node 24
-        uses: actions/setup-node@v4
+      - name: Configurer Node 22
+        uses: actions/setup-node@v5
         with:
-          node-version: '24'
+          node-version: '22'
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
@@ -71,10 +71,10 @@ jobs:
     # comportement applicatif à chaque push.
     needs: [catalog-service-tests, review-service-tests, frontend-build]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Configurer Java 21
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: '21'
@@ -106,7 +106,7 @@ jobs:
 
       - name: Publier le rapport Cucumber (même en cas d'échec)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: cucumber-report
           path: e2e-tests/target/cucumber-report.html
