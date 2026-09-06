@@ -98,6 +98,12 @@ public class MediaFormPage {
 
     public void submit() {
         submitButton.click();
+        // Sans cette attente, l'étape suivante peut naviguer ailleurs
+        // (driver.get()) AVANT que le POST n'ait eu le temps de partir,
+        // ce qui annule la requête HTTP encore en vol côté navigateur.
+        // On attend donc la redirection vers /medias/{id}, preuve que la
+        // création a réellement été traitée par le backend.
+        wait.until(ExpectedConditions.not(ExpectedConditions.urlContains("/medias/nouveau")));
     }
 
     private void fill(WebElement field, String value) {
